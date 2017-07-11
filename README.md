@@ -1,5 +1,7 @@
-# Gaia Sprint 2017
-------------------
+Gaia Sprint 2017
+----------------
+You must walk before you sprint.
+
 
 Authors
 -------
