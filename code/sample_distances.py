@@ -26,9 +26,22 @@ for i, star in data:
     # - 2MASS
     # - WISE
     # - SDSS
-    # - APASS
-    
 
+    columns = [
+        ("J", "j_m_2mass", "j_msig_2mass"),
+        ("H", "h_m_2mass", "h_msig_2mass"),
+        ("K", "k_m_2mass", "k_msig_2mass"),
+        ("W1", "w1mpro", "w1sigmpro"),
+        ("W2", "w2mpro", "w2sigmpro"),
+        ("W3", "w3mpro", "w3sigmpro"),
+        ("G", "G", "ERR_G"),
+        ("R", "R", "ERR_R"),
+        ("I", "I", "ERR_I")
+        ]
+
+    for magnitude, column, error_column in columns:
+        if np.isfinite(star[column]) and np.isfinite(star[error_column]):
+            kwds[magnitude] = (star[column], star[error_column])
 
     # Update kwds with parallax if available.
     if np.isfinite(star["parallax"]):
