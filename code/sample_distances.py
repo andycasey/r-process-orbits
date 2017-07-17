@@ -5,6 +5,7 @@ from isochrones import StarModel
 from isochrones.mist import MIST_Isochrone
 from astropy.table import Table
 
+CLOBBER = False
 DATA_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), "../data"))
 
 data = Table.read(os.path.join(DATA_FOLDER, "literature.csv"), format="csv")
@@ -12,9 +13,15 @@ mist = MIST_Isochrone()
 
 N = len(data)
 
-for i, star in data:
+for i, star in enumerate(data):
 
     print("{}/{}: {}".format(i, N, star["Name"]))
+
+    output_path = os.path.join(DATA_FOLDER, "{}_mist_samples.csv".format(star["Name"]))
+
+    if os.path.exists(output_path) and not CLOBBER:
+        print("Skipping because {} exists".format(output_path))
+        continue
 
     # Common keywords to all stars.
     kwds = dict(
@@ -47,15 +54,11 @@ for i, star in data:
     if np.isfinite(star["parallax"]):
         kwds["parallax"] = (star["parallax"], star["parallax_error"])
 
+    print(kwds)
     model = StarModel(mist, **kwds)
 
     # Update uniform priors on age and distance.
     model._bounds["age"] = (np.log10(10.0e9), np.log10(13.721e9))
     model._bounds["distance"] = (0, 30000.0)
     model.fit(refit=True, n_live_points=1000, evidence_tolerance=0.5)
-    model.samples.to_csv(
-        os.path.join(DATA_FOLDER, "{}_mist_samples.csv".format(star["Name"])))
-
-
-    # Print out quantile summaries for each star.
-    raise a
+    model.samples.to_csv(output_path)

@@ -14,20 +14,28 @@ DATA_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), "../data")
 
 data = Table.read(os.path.join(DATA_FOLDER, "literature.csv"), format="csv")
 
-
 # Number of realizations to do per star
 N, ro, vo = (1000, 8.0, 220.0)
 ts = np.linspace(0, 10, 10000) * units.Gyr
 
-
-
-
 for i, star in enumerate(data):
 
     star_name = star["Name"]
-    posterior = Table.read(
-        os.path.join(DATA_FOLDER, "{}_mist_samples.csv".format(star_name)),
-        format="csv")
+    output_path = os.path.join(DATA_FOLDER, "{}_orbit_samples.pkl".format(star_name))
+
+    print("On {}: {}".format(i, star_name))
+    
+    if os.path.exists(output_path) and not CLOBBER:
+        print("Skipping because {} exists".format(output_path))
+        continue
+
+    posterior_path = os.path.join(DATA_FOLDER, "{}_mist_samples.csv".format(star_name))
+
+    if not os.path.exists(posterior_path):
+        print("Skipping because {} does not exist".format(posterior_path))
+        continue
+
+    posterior = Table.read(posterior_path, format="csv")
 
     orbits = []
     for i in range(N):
@@ -55,10 +63,12 @@ for i, star in enumerate(data):
         orbits.append(orbit)
 
     # Save the xyrz values.
-    xyrz = np.array([[o.x(ts), o.y(ts), o.R(ts), o.z(ts)] for o in orbits])
-    output_path = os.path.join(DATA_FOLDER, "{}_orbit_samples.csv".format(star_name))
+    positions \
+        = np.array([[o.x(ts), o.y(ts), o.z(ts), o.R(ts)] for o in orbits])
+    properties = np.array([[o.rap(), o.rperi(), o.e(), o.zmax()] for o in orbits])
+
     with open(output_path, "wb") as fp:
-        pickle.dump(xyrz, fp, -1)
+        pickle.dump((positions, properties), fp, -1)
 
     # Print some summary things.
     properties = {
