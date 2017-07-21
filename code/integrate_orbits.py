@@ -9,7 +9,7 @@ from galpy.potential import MWPotential2014 as mw
 
 np.random.seed(42)
 
-
+CLOBBER = False
 DATA_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), "../data"))
 
 data = Table.read(os.path.join(DATA_FOLDER, "literature.csv"), format="csv")
