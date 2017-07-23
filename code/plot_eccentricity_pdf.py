@@ -22,16 +22,11 @@ sample_paths = glob(os.path.join(DATA_FOLDER, "*_samples.pkl"))
 
 literature = Table.read(os.path.join(DATA_FOLDER, "literature.csv"), format="csv")
 
-
 ignore_object_names = (
-    "BPS CS 22183-031",
-    "BPS CS 22892-052",
     "BPS CS 29497-004",
-    "BPS CS 30306-132",
-    "BPS CS 31078-018",
-    "CS 29491-069",
+    "BPS CS 22892-052",
     "J203843.2-002333"
-    )
+)
     
 fig, ax = plt.subplots()
 
@@ -41,7 +36,6 @@ kwds = dict(histtype="step", normed=True, bins=np.linspace(0, 1, 100),
 for i, sample_path in enumerate(sample_paths):
 
     object_name = os.path.basename(sample_path).split("_")[0]
-
 
     mist_path = sample_path.replace("orbit_samples.pkl", "mist_samples.csv")
     mist_samples = Table.read(mist_path, format="csv")
@@ -75,19 +69,15 @@ for i, sample_path in enumerate(sample_paths):
     ax.plot([0], [-1], c=color, label=object_name)
 
 ax.set_ylim(0, ax.get_ylim()[1])
-#ax.set_yticks([])
 
 ax.set_xlabel(r"${\rm Eccentricity,}$ $e$")
 
 ax.xaxis.set_major_locator(MaxNLocator(5))
 ax.yaxis.set_major_locator(MaxNLocator(5))
 
-plt.legend(loc="upper left", frameon=False, fontsize=12, ncol=1)
+plt.legend(loc="upper left", frameon=False, fontsize=10, ncol=1)
 
 fig.tight_layout()
 
 fig.savefig(os.path.join(FIGURES_FOLDER, "eccentricities_pdf.pdf"), dpi=300)
 fig.savefig(os.path.join(FIGURES_FOLDER, "eccentricities_pdf.png"), dpi=300)
-
-
-
