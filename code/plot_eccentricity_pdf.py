@@ -22,11 +22,7 @@ sample_paths = glob(os.path.join(DATA_FOLDER, "*_samples.pkl"))
 
 literature = Table.read(os.path.join(DATA_FOLDER, "literature.csv"), format="csv")
 
-ignore_object_names = (
-    "BPS CS 29497-004",
-    "BPS CS 22892-052",
-    "J203843.2-002333"
-)
+ignore_object_names = ()
     
 fig, ax = plt.subplots()
 
